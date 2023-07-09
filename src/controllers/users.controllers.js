@@ -31,13 +31,13 @@ export async function signin (req, res) {
     try {
         const { email, password } = req.body;
         const user = await db.collection('usuarios').findOne({ email });
-
+        
 
         if(user && bcrypt.compareSync(password, user.password)) {
             const token = uuid();
-        
-				await db.collection("sessoes").insertOne({userId: user._id, token})
-                res.status(200).send(token);
+            await db.collection("sessoes").deleteMany({ userId: user._id });
+			await db.collection("sessoes").insertOne({userId: user._id, token});
+            res.status(200).send(token);
         } else if(!user) {
             res.status(404).send("usuário não encontrado (email incorreto)");
         } else {

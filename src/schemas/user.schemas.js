@@ -8,6 +8,6 @@ export const schemaSignup = joi.object({
 
 export const schemaSignin = joi.object({
     email: joi.string().email().required(),
-    password: joi.required()
+    password: joi.required(),
 })
 
