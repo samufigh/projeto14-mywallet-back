@@ -40,13 +40,16 @@ export async function signin (req, res) {
 
         const user = await db.collection('usuarios').findOne({ email });
 
+
         if(user && bcrypt.compareSync(password, user.password)) {
             const token = uuid();
         
 				await db.collection("sessoes").insertOne({userId: user._id,token})
-                res.send(token);
+                res.sendStatus(200);
+        } else if(!user) {
+            res.status(404).send("usuário não encontrado (email incorreto)");
         } else {
-            res.send("usuário não encontrado (email ou senha incorretos)");
+            res.status(401).send("usuário não encontrado (senha incorreta)");
         }
     
         
