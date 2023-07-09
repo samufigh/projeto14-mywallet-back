@@ -22,3 +22,18 @@ export async function transaction(req, res){
         res.status(500).send(err.message);
     }
 }
+
+export async function showTransactions(req, res){
+    const { user } = res.locals;
+    try {
+        let transactions = await db.collection("transacoes").find({userId:user._id}).toArray();
+        const id = await db.collection("usuarios").findOne({_id: user.userId});
+        transactions = {
+            ...transactions,
+            name: id.name
+        }
+        res.send(transactions);
+    } catch (err){
+        res.status(500).send(err.message);
+    }
+}
