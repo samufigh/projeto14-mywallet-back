@@ -1,6 +1,6 @@
 import { db } from "../database/database.connection.js";
 import bcrypt from "bcrypt";
-import { schemaSignup, schemaSignin } from "../schemas/user.schemas.js";
+import { schemaSignup} from "../schemas/user.schemas.js";
 import { v4 as uuid } from 'uuid';
 
 export async function signup (req, res) {
@@ -30,22 +30,14 @@ export async function signup (req, res) {
 export async function signin (req, res) {
     try {
         const { email, password } = req.body;
-        const infoUser = { email, password};
-        const validation = schemaSignin.validate(infoUser, {abortEarly: false});
-        
-        if (validation.error) {
-            const errors = validation.error.details.map(detail => detail.message);
-            return res.status(422).send(errors);
-        }
-
         const user = await db.collection('usuarios').findOne({ email });
 
 
         if(user && bcrypt.compareSync(password, user.password)) {
             const token = uuid();
         
-				await db.collection("sessoes").insertOne({userId: user._id,token})
-                res.sendStatus(200);
+				await db.collection("sessoes").insertOne({userId: user._id, token})
+                res.status(200).send(token);
         } else if(!user) {
             res.status(404).send("usuário não encontrado (email incorreto)");
         } else {
