@@ -28,10 +28,6 @@ export async function showTransactions(req, res){
     try {
         let transactions = await db.collection("transacoes").find({userId:user._id}).toArray();
         const id = await db.collection("usuarios").findOne({_id: user.userId});
-        transactions = {
-            ...transactions,
-            name: id.name
-        }
         res.send(transactions);
     } catch (err){
         res.status(500).send(err.message);
