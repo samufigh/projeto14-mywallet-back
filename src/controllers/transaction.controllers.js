@@ -26,9 +26,12 @@ export async function transaction(req, res){
 export async function showTransactions(req, res){
     const { user } = res.locals;
     try {
-        let transactions = await db.collection("transacoes").find({userId:user._id}).toArray();
-        const id = await db.collection("usuarios").findOne({_id: user.userId});
-        res.send(transactions);
+        const transactions = await db.collection("transacoes").find({userId:user._id}).toArray();;
+        const name = user.name
+        const data = {transactions, name}
+        console.log(data)
+        res.send(data);
+
     } catch (err){
         res.status(500).send(err.message);
     }

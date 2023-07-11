@@ -9,7 +9,16 @@ export async function validateAuth(req, res, next){
         const session = await db.collection("sessoes").findOne({ token });
         if (!session) return res.status(401).send("não autorizado");
 
-        res.locals.user = session;
+        const user = await db.collection("usuarios").findOne({
+            _id: session.userId,
+          });
+          if (!user) {
+            return res.sendStatus(401);
+          }
+      
+          delete user.password;
+
+        res.locals.user = user;
     
         next();
     } catch (err){
